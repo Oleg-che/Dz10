@@ -54,6 +54,9 @@ public class Boll extends Application {
     private void drawFrame() {
         gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
 
+        double dX = 3;
+        double dY = 2;
+
         gc.setFill(Color.RED);
         gc.setStroke(Color.BLACK);
         gc.setLineWidth(2);
@@ -62,18 +65,13 @@ public class Boll extends Application {
         gc.fillOval(x, y, DIAMETER, DIAMETER);
         gc.strokeOval(x, y, DIAMETER, DIAMETER);
 
-        if (x == (BOARD_WIDTH - DIAMETER)) {
-            for (int i = x; i < 0 ; i++) {
-                x -= 3;
-            }
-        } else if (y == (BOARD_HEIGHT - DIAMETER)) {
-            for (int i = y; i < 0 ; i++) {
-                y -=2;
-            }
-        } else {
-            x += 3;
-            y += 2;
+        if (x < 0 || x > (BOARD_WIDTH - DIAMETER)) {
+            dX = -dX;
+        } else if (y < 0 || y > (BOARD_HEIGHT - DIAMETER)) {
+            dY = -dY;
         }
+            x += dX;
+            y += dY;
     }
     public static void main(String[] args) {
         launch(args);
