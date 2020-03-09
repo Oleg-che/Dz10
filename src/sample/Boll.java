@@ -9,7 +9,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.scene.paint.Color;
 
+import java.util.Random;
+
 public class Boll extends Application {
+    private Random random = new Random();
+    private double DIAMETER = random.nextInt(150) + 50;
 
     private static final int BOARD_WIDTH = 800;
     private static final int BOARD_HEIGHT = 500;
@@ -18,9 +22,10 @@ public class Boll extends Application {
     private boolean closed;
     private GraphicsContext gc;
 
-    private int x = 0;
-    private int y = 0;
-    private double DIAMETER = 0;
+    private double x = 0;
+    private double y = 0;
+    private double dX = random.nextInt(10) + 1;
+    private double dY = random.nextInt(10) + 1;
 
     @Override
     public void start(Stage primaryStage) {
@@ -36,43 +41,48 @@ public class Boll extends Application {
         gc = canvas.getGraphicsContext2D();
         new Thread(this::runMainGameLoopInThread).start();
     }
+
     @Override
     public void stop() {
         closed = true;
     }
+
     private void runMainGameLoopInThread() {
         while (!closed) {
             Platform.runLater(this::drawFrame);
             try {
-                int pauseBetweenFramesMillis = 500 / FPS;
+                int pauseBetweenFramesMillis = 1000 / FPS;
                 Thread.sleep(pauseBetweenFramesMillis);
             } catch (InterruptedException e) {
                 break;
             }
         }
     }
+
     private void drawFrame() {
         gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
-
-        double dX = 3;
-        double dY = 2;
 
         gc.setFill(Color.RED);
         gc.setStroke(Color.BLACK);
         gc.setLineWidth(2);
 
-        DIAMETER = 50;
         gc.fillOval(x, y, DIAMETER, DIAMETER);
         gc.strokeOval(x, y, DIAMETER, DIAMETER);
 
-        if (x < 0 || x > (BOARD_WIDTH - DIAMETER)) {
-            dX = -dX;
-        } else if (y < 0 || y > (BOARD_HEIGHT - DIAMETER)) {
-            dY = -dY;
+        if (x <= 0) {
+            dX = Math.abs(dX);
+        } else if (x + DIAMETER >= BOARD_WIDTH) {
+            dX = -Math.abs(dX);
         }
-            x += dX;
-            y += dY;
+        if (y <= 0) {
+            dY = Math.abs(dY);
+        } else if (y + DIAMETER >= BOARD_HEIGHT) {
+            dY = -Math.abs(dY);
+        }
+        x += dX;
+        y += dY;
     }
+
     public static void main(String[] args) {
         launch(args);
     }
